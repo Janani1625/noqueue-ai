@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:15
+    container_name: noqueue_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: noqueue
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./infra/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    ports:
+      - "5432:5432"
+
+  api:
+    build: ./services/api
+    container_name: noqueue_api
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+volumes:
+  db-data:
